@@ -4,6 +4,29 @@
 
 API RESTfulf developed as ASP.NET Core and OracleDB + EF Core to manage the warn, alerts and countries.
 
+# Technologies Used
+
+- `C#` - Language to developer.
+- `dotnet` - Development Framework.
+- `ef Core` - ORM to talk with db.
+- `Oracle DB` - Database to storage data.
+- `Razor + TagHelpers` - Front end Development.
+- `Swagger` - Api details docs with swagger and tests routers.
+
+## Architecture
+
+- Clean Architecture inspired by layers:
+
+    `Domain` (Entities)
+
+    `Application` (Business logic and services)
+
+    `Infra` (Access with EF Core to connect with oracle database)
+
+    `WebApi` (Presentation layer and API endpoints)
+
+    `Front` (Razor Pages with TagHelpers)
+
 ## Routes
 
 (Api)
@@ -63,27 +86,54 @@ cd disaster-pulse-api-dotnet
 
 3. Create and configure the `.env` file using the model in [.env.example](./.env.example)
 
-4. Enter in Api Directory:
+4. Run migrations:
 
 ```bash
-cd ./Src/WebApi
+dotnet ef database update --project ./Src/Infra
 ```
 
-5. Run migrations:
+5. Run api:
 
 ```bash
-dotnet ef database update
+dotnet run --project ./Src/WebApi
 ```
 
-6. Run the api:
+6. Run the Front:
 
 ```bash
-dotnet run
+dotnet run --project ./Src/Front
 ```
 
 7. The api is avaible on:
 
 - <http://localhost:5272/api>
+
+8. The Front is avaible on:
+
+- <http://localhost:5170>
+
+## Tests
+
+- Manual tests performed via Swagger and Razor interface.
+
+- Examples of requests in the Swagger interface.
+
+- Url Swagger:
+    <http://localhost:5272/swagger>
+
+## Demonstration
+
+- Request Examples (Swagger)
+
+``http
+GET /alerts
+POST /alerts
+{
+  "description": "Enchente no Rio de Janeiro", Brazil
+  "topic": "French",
+  "countryId": 1
+}
+`
 
 ## Contribution
 

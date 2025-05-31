@@ -26,7 +26,9 @@ namespace DisasterPulseApiDotnet.Src.Domain.Entities
             }
 
             var user = await _context.Users
-                .FirstOrDefaultAsync(u => u.Username == credentials.Username);
+                .FirstOrDefaultAsync(u =>
+                    u.Username == credentials.Username
+                );
 
             if (user == null || !BCrypt.Net.BCrypt.Verify(credentials.Password, user.PasswordHash))
             {
@@ -37,9 +39,4 @@ namespace DisasterPulseApiDotnet.Src.Domain.Entities
         }
     }
 
-    public class Credentials
-    {
-        public string Username { get; set; } = string.Empty;
-        public string Password { get; set; } = string.Empty;
-    }
 }

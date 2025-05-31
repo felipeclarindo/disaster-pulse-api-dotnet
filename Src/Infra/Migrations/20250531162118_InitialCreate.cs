@@ -17,8 +17,7 @@ namespace Infra.Migrations
                 {
                     Id = table.Column<long>(type: "NUMBER(19)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Region = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true)
+                    Name = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -31,7 +30,7 @@ namespace Infra.Migrations
                 {
                     Id = table.Column<long>(type: "NUMBER(19)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    Username = table.Column<string>(type: "NVARCHAR2(450)", nullable: false),
+                    Username = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     PasswordHash = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     Role = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
                     CreatedAt = table.Column<DateTime>(type: "TIMESTAMP(7)", nullable: false)
@@ -47,10 +46,10 @@ namespace Infra.Migrations
                 {
                     Id = table.Column<long>(type: "NUMBER(19)", nullable: false)
                         .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
+                    Topic = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
                     Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    Topic = table.Column<long>(type: "NUMBER(19)", nullable: false),
-                    CountryId = table.Column<long>(type: "NUMBER(19)", nullable: true),
-                    CountryId1 = table.Column<long>(type: "NUMBER(19)", nullable: true)
+                    CountryId = table.Column<long>(type: "NUMBER(19)", nullable: false),
+                    Criticality = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false)
                 },
                 constraints: table =>
                 {
@@ -59,53 +58,13 @@ namespace Infra.Migrations
                         name: "FK_Alerts_Countries_CountryId",
                         column: x => x.CountryId,
                         principalTable: "Countries",
-                        principalColumn: "Id");
-                    table.ForeignKey(
-                        name: "FK_Alerts_Countries_CountryId1",
-                        column: x => x.CountryId1,
-                        principalTable: "Countries",
-                        principalColumn: "Id");
-                });
-
-            migrationBuilder.CreateTable(
-                name: "Warns",
-                columns: table => new
-                {
-                    Id = table.Column<long>(type: "NUMBER(19)", nullable: false)
-                        .Annotation("Oracle:Identity", "START WITH 1 INCREMENT BY 1"),
-                    Criticality = table.Column<string>(type: "NVARCHAR2(2000)", nullable: false),
-                    Description = table.Column<string>(type: "NVARCHAR2(2000)", nullable: true),
-                    CountryId = table.Column<long>(type: "NUMBER(19)", nullable: true)
-                },
-                constraints: table =>
-                {
-                    table.PrimaryKey("PK_Warns", x => x.Id);
-                    table.ForeignKey(
-                        name: "FK_Warns_Countries_CountryId",
-                        column: x => x.CountryId,
-                        principalTable: "Countries",
-                        principalColumn: "Id");
+                        principalColumn: "Id",
+                        onDelete: ReferentialAction.Cascade);
                 });
 
             migrationBuilder.CreateIndex(
                 name: "IX_Alerts_CountryId",
                 table: "Alerts",
-                column: "CountryId");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Alerts_CountryId1",
-                table: "Alerts",
-                column: "CountryId1");
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Users_Username",
-                table: "Users",
-                column: "Username",
-                unique: true);
-
-            migrationBuilder.CreateIndex(
-                name: "IX_Warns_CountryId",
-                table: "Warns",
                 column: "CountryId");
         }
 
@@ -117,9 +76,6 @@ namespace Infra.Migrations
 
             migrationBuilder.DropTable(
                 name: "Users");
-
-            migrationBuilder.DropTable(
-                name: "Warns");
 
             migrationBuilder.DropTable(
                 name: "Countries");

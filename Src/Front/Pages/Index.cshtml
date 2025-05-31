@@ -1,0 +1,33 @@
+﻿@page
+@model DisasterPulseApiDotnet.Src.Front.Pages.IndexModel
+
+<h1>Alertas de Desastres Naturais</h1>
+
+<a asp-page="Create" class="btn btn-primary mb-3">Novo Alerta</a>
+
+@if (Model.Alerts.Any())
+{
+    <table class="table table-bordered">
+        <thead>
+            <tr>
+                <th>Tópico</th>
+                <th>Descrição</th>
+                <th>ID do País</th>
+            </tr>
+        </thead>
+        <tbody>
+            @foreach (var alert in Model.Alerts)
+            {
+                <tr>
+                    <td>@alert.Topic</td>
+                    <td>@alert.Description</td>
+                    <td>@alert.CountryId</td>
+                </tr>
+            }
+        </tbody>
+    </table>
+}
+else
+{
+    <p>Nenhum alerta encontrado.</p>
+}

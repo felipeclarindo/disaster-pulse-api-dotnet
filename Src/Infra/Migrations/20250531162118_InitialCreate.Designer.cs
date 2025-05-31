@@ -12,7 +12,7 @@ using Oracle.EntityFrameworkCore.Metadata;
 namespace Infra.Migrations
 {
     [DbContext(typeof(ApplicationDbContext))]
-    [Migration("20250529215348_InitialCreate")]
+    [Migration("20250531162118_InitialCreate")]
     partial class InitialCreate
     {
         /// <inheritdoc />
@@ -33,23 +33,22 @@ namespace Infra.Migrations
 
                     OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
 
-                    b.Property<long?>("CountryId")
+                    b.Property<long>("CountryId")
                         .HasColumnType("NUMBER(19)");
 
-                    b.Property<long?>("CountryId1")
-                        .HasColumnType("NUMBER(19)");
+                    b.Property<string>("Criticality")
+                        .IsRequired()
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.Property<string>("Description")
                         .HasColumnType("NVARCHAR2(2000)");
 
-                    b.Property<long>("Topic")
-                        .HasColumnType("NUMBER(19)");
+                    b.Property<string>("Topic")
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.HasKey("Id");
 
                     b.HasIndex("CountryId");
-
-                    b.HasIndex("CountryId1");
 
                     b.ToTable("Alerts");
                 });
@@ -64,9 +63,6 @@ namespace Infra.Migrations
 
                     b.Property<string>("Name")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<string>("Region")
                         .HasColumnType("NVARCHAR2(2000)");
 
                     b.HasKey("Id");
@@ -95,57 +91,27 @@ namespace Infra.Migrations
 
                     b.Property<string>("Username")
                         .IsRequired()
-                        .HasColumnType("NVARCHAR2(450)");
+                        .HasColumnType("NVARCHAR2(2000)");
 
                     b.HasKey("Id");
-
-                    b.HasIndex("Username")
-                        .IsUnique();
 
                     b.ToTable("Users");
                 });
 
-            modelBuilder.Entity("DisasterPulseApiDotnet.Src.Domain.Entities.Warn", b =>
-                {
-                    b.Property<long>("Id")
-                        .ValueGeneratedOnAdd()
-                        .HasColumnType("NUMBER(19)");
-
-                    OraclePropertyBuilderExtensions.UseIdentityColumn(b.Property<long>("Id"));
-
-                    b.Property<long?>("CountryId")
-                        .HasColumnType("NUMBER(19)");
-
-                    b.Property<string>("Criticality")
-                        .IsRequired()
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.Property<string>("Description")
-                        .HasColumnType("NVARCHAR2(2000)");
-
-                    b.HasKey("Id");
-
-                    b.HasIndex("CountryId");
-
-                    b.ToTable("Warns");
-                });
-
             modelBuilder.Entity("DisasterPulseApiDotnet.Src.Domain.Entities.Alert", b =>
                 {
-                    b.HasOne("DisasterPulseApiDotnet.Src.Domain.Entities.Country", null)
-                        .WithMany()
-                        .HasForeignKey("CountryId");
+                    b.HasOne("DisasterPulseApiDotnet.Src.Domain.Entities.Country", "Country")
+                        .WithMany("Alerts")
+                        .HasForeignKey("CountryId")
+                        .OnDelete(DeleteBehavior.Cascade)
+                        .IsRequired();
 
-                    b.HasOne("DisasterPulseApiDotnet.Src.Domain.Entities.Country", null)
-                        .WithMany()
-                        .HasForeignKey("CountryId1");
+                    b.Navigation("Country");
                 });
 
-            modelBuilder.Entity("DisasterPulseApiDotnet.Src.Domain.Entities.Warn", b =>
+            modelBuilder.Entity("DisasterPulseApiDotnet.Src.Domain.Entities.Country", b =>
                 {
-                    b.HasOne("DisasterPulseApiDotnet.Src.Domain.Entities.Country", null)
-                        .WithMany()
-                        .HasForeignKey("CountryId");
+                    b.Navigation("Alerts");
                 });
 #pragma warning restore 612, 618
         }

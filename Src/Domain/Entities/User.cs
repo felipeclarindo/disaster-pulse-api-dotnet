@@ -1,11 +1,14 @@
+using System.ComponentModel.DataAnnotations.Schema;
+
 namespace DisasterPulseApiDotnet.Src.Domain.Entities
 {
     public class User
     {
-        public required long Id { get; set; }
+        public long Id { get; set; }
         public required string Username { get; set; }
         public required string PasswordHash { get; set; }
-        public required string Role { get; set; }
+        public UserRole Role { get; set; } = UserRole.USER;
         public DateTime CreatedAt { get; set; } = DateTime.UtcNow;
+
     }
 }

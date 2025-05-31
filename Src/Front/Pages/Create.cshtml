@@ -1,0 +1,35 @@
+@page
+@model DisasterPulseApiDotnet.Src.Front.Pages.CreateModel
+
+@{
+    ViewData["Title"] = "Enviar Alerta";
+}
+
+<h1>Enviar Alerta sobre Desastres Naturais</h1>
+<hr />
+
+<form method="post">
+    <div class="mb-3">
+        <label asp-for="Alert.Topic" class="form-label">Tópico</label>
+        <input asp-for="Alert.Topic" class="form-control" />
+        <span asp-validation-for="Alert.Topic" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Alert.Description" class="form-label">Descrição</label>
+        <input asp-for="Alert.Description" class="form-control" />
+        <span asp-validation-for="Alert.Description" class="text-danger"></span>
+    </div>
+
+    <div class="mb-3">
+        <label asp-for="Alert.CountryId" class="form-label">País</label>
+        <select asp-for="Alert.CountryId" asp-items="Model.CountryOptions" class="form-select"></select>
+        <span asp-validation-for="Alert.CountryId" class="text-danger"></span>
+    </div>
+
+    <button type="submit" class="btn btn-success">Enviar Alerta</button>
+</form>
+
+@section Scripts {
+    <partial name="_ValidationScriptsPartial" />
+}

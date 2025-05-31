@@ -4,28 +4,63 @@
 
 API RESTful desenvolvida com ASP.NET Core e OracleDB + EF Core para gerenciar motos, pátios e setores.
 
+## Tecnologias Utilizadas
+
+- `C#` - Linguagem de programação para desenvolvimento.
+- `.NET` - Framework de desenvolvimento.
+- `Entity Framework Core` - ORM (Mapeador Objeto-Relacional) para comunicação com o banco de dados.
+- `Oracle DB` - Banco de dados para armazenamento de dados.
+- `Razor + TagHelpers` - Desenvolvimento do front-end.
+- `Swagger` - Documentação de detalhes da API e teste de rotas.
+
+## Arquitetura da Solução
+
+- Clean Architecture inspirada em camadas:
+
+    `Domain` (Entidades)
+
+    `Application` (Lógica de negócios e serviços)
+
+    `Infra` (Acesso com EF Core para conectar com o banco de dados oracle)
+
+    `WebApi` (Camada de apresentação e endpoints da API)
+
+    `Front` (Razor Pages com TagHelpers)
+
 ## Rotas
 
 (Api)
 
 - `GET api/` - Obter descrição da Api.
 
-(Warn)
+(Auth)
+
+- `GET api/auth/login` - Fazer Login.
+
+(Users)
+
+- `GET api/users` -  Obter todas os usuarios.
+- `GET api/users/{id}` - Obter usuario pelo Id.
+- `POST api/users` - Criar um novo usuario.
+- `PUT api/users/{id}` - Atualizar usuario pelo Id.
+- `DELETE api/users/{id}` - Delete user by Id.
+
+(Avisos)
 
 - `GET api/warns` - Obter todas os avisos.
 - `GET api/warns/{id}` - Obter aviso por ID.
-- `GET api/warns/country/{sector_id}` - Obter aviso por pais.
+- `GET api/warns/country/{country_id}` - Obter aviso por pais.
 - `POST api/warns` - Criar um novo aviso.
 - `PUT api/warns/{id}` - Atualizar aviso por ID.
 - `DELETE api/warns/{id}` - Deletar aviso por ID.
 
-(Country)
+(Paises)
 
-- `GET api/country` - Obter todos os paises.
-- `GET api/country/{id}` - Obter pais por ID.
-- `POST api/country` - Criar um novo pais.
-- `PUT api/country/{id}` - Atualizar pais por ID.
-- `DELETE api/country/{id}` - Deletar pais por ID.
+- `GET api/countries` - Obter todos os paises.
+- `GET api/countries/{id}` - Obter pais por ID.
+- `POST api/countries` - Criar um novo pais.
+- `PUT api/countries/{id}` - Atualizar pais por ID.
+- `DELETE api/countries/{id}` - Deletar pais por ID.
 
 (Alert)
 
@@ -51,27 +86,54 @@ cd disaster-pulse-api-dotnet
 
 3. Crie e configure o arquivo .env usando o modelo em [.env.example](./.env.example)
 
-4. Enter no diretorio da API:
+4. Execute as migrações:
 
 ```bash
-cd ./Src/WebApi
+dotnet ef database update --project ./Src/Infra
 ```
 
-5. Execute as migrações:
+5. Rode a API:
 
 ```bash
-dotnet ef database update
+dotnet run --project ./Src/WebApi
 ```
 
-6. Rode a API:
+6. Rode o Front:
 
 ```bash
-dotnet run
+dotnet run --project ./Src/Front
 ```
 
 7. A API está disponível em:
 
 - <http://localhost:5272/api>
+
+8. O Front está disponível em:
+
+- <http://localhost:5170>
+
+## Testes
+
+- Testes manuais realizados via Swagger e interface Razor.
+
+- Exemplos de requisições na interface Swagger.
+
+- Url do Swagger:
+    <http://localhost:5272/swagger>
+
+# Demonstração
+
+- Exemplos de Requisição (Swagger)
+
+```http
+GET /alerts
+POST /alerts
+{
+  "description": "Enchente no Rio de Janeiro",
+  "topic": "Enchente",
+  "countryId": 1
+}
+```
 
 ## Contribuição
 

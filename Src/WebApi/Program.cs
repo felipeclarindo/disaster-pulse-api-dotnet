@@ -1,7 +1,6 @@
-using Microsoft.EntityFrameworkCore;
-using DotNetEnv;
 using DisasterPulseApiDotnet.Src.Infra.Database;
 using DisasterPulseApiDotnet.Src.Utils.Functions;
+using Microsoft.EntityFrameworkCore;
 
 var helper = new HelperFunctions();
 helper.LoadEnvFromRoot();
@@ -16,17 +15,24 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseOracle(connectionString));
-
+builder.Services.AddHttpClient(
+    "ApiClient",
+    client =>
+    {
+        client.BaseAddress = new Uri("https://localhost:5001/api/");
+    });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
         policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
 });
-
+builder.Services.AddHttpClient();
 builder.Services.AddOpenApi();
 builder.Services.AddSwaggerGen();
 builder.Services.AddControllers();
 builder.Services.AddEndpointsApiExplorer();
+builder.Services.AddControllersWithViews();
+builder.Services.AddRazorPages();
 
 var app = builder.Build();
 
@@ -40,5 +46,6 @@ if (app.Environment.IsDevelopment())
 app.UseCors("AllowAllOrigins");
 app.UseAuthorization();
 app.MapControllers();
+app.MapRazorPages();
 
 await app.RunAsync();

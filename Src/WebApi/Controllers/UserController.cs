@@ -1,3 +1,4 @@
+using DisasterPulseApiDotnet.Src.Application.DTOs;
 using DisasterPulseApiDotnet.Src.Infra.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -32,9 +33,21 @@ namespace DisasterPulseApiDotnet.Src.Domain.Entities
         }
 
         [HttpPost]
-        public async Task<ActionResult<User>> Create(User user)
+        public async Task<ActionResult<User>> Create([FromBody] UserDTO userDTO)
         {
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+            if (string.IsNullOrEmpty(userDTO.Username))
+                return BadRequest("Username is required.");
+
+            if (string.IsNullOrEmpty(userDTO.Password))
+                return BadRequest("Password is required.");
+
+            if (await _context.Users.AnyAsync(u => u.Username == userDTO.Username))
+                return BadRequest("Username already exists.");
+
+            var passwordHash = BCrypt.Net.BCrypt.HashPassword(userDTO.Password);
+
+            User user = new User { Username = userDTO.Username, PasswordHash = passwordHash };
+
 
             _context.Users.Add(user);
             await _context.SaveChangesAsync();
@@ -42,14 +55,18 @@ namespace DisasterPulseApiDotnet.Src.Domain.Entities
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, User user)
+        public async Task<IActionResult> Update(long id, [FromBody] UserUpdateDTO updateDTO)
         {
-            if (id != user.Id)
-                return BadRequest();
+            var user = await _context.Users.FindAsync(id);
+            if (user == null)
+                return NotFound();
 
-            user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(user.PasswordHash);
+            if (!string.IsNullOrEmpty(updateDTO.Username))
+                user.Username = updateDTO.Username;
 
-            _context.Entry(user).State = EntityState.Modified;
+            if (!string.IsNullOrEmpty(updateDTO.Password))
+                user.PasswordHash = BCrypt.Net.BCrypt.HashPassword(updateDTO.Password);
+
             await _context.SaveChangesAsync();
             return NoContent();
         }
