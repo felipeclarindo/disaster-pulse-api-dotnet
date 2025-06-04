@@ -1,3 +1,5 @@
+using System.Text.Json.Serialization;
+
 namespace DisasterPulseApiDotnet.Src.Domain.Entities
 {
     public class Alert
@@ -8,7 +10,7 @@ namespace DisasterPulseApiDotnet.Src.Domain.Entities
 
         public long CountryId { get; set; }
         public Criticality Criticality { get; set; }
+        [JsonIgnore]
         public Country? Country { get; set; }
     }
-
 }

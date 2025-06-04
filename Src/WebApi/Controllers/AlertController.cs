@@ -31,8 +31,24 @@ namespace DisasterPulseApiDotnet.Src.WebApi.Controllers
             return Ok(moto);
         }
 
+
+        [HttpGet("criticality")]
+        public ActionResult<List<AlertCriticalityCountDTO>> GetCriticalityCounts()
+        {
+            var counts = Enum.GetValues(typeof(Criticality))
+                .Cast<Criticality>()
+                .Select(criticality => new AlertCriticalityCountDTO
+                {
+                    Criticality = (int)criticality,
+                    Count = _context.Alerts.Count(a => a.Criticality == criticality),
+                })
+                .ToList();
+
+            return Ok(counts);
+        }
+
         [HttpPost]
-        public async Task<ActionResult<Alert>> Create(AlertDTO alertDTO)
+        public async Task<ActionResult<Alert>> Create([FromBody] AlertDTO alertDTO)
         {
             if (alertDTO == null)
                 return BadRequest("Alert data is required.");
@@ -54,7 +70,7 @@ namespace DisasterPulseApiDotnet.Src.WebApi.Controllers
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, Alert alert)
+        public async Task<IActionResult> Update(long id, [FromBody] Alert alert)
         {
             if (id != alert.Id) return BadRequest();
             _context.Entry(alert).State = EntityState.Modified;

@@ -8,24 +8,61 @@ html {
   }
 }
 
-.btn:focus, .btn:active:focus, .btn-link.nav-link:focus, .form-control:focus, .form-check-input:focus {
+.btn:focus,
+.btn:active:focus,
+.btn-link.nav-link:focus,
+.form-control:focus,
+.form-check-input:focus {
   box-shadow: 0 0 0 0.1rem white, 0 0 0 0.25rem #258cfb;
 }
 
 html {
   position: relative;
-  min-height: 100%;
 }
 
 body {
   margin-bottom: 60px;
+  background-color: #fffefc;
 }
 
-.form-floating > .form-control-plaintext::placeholder, .form-floating > .form-control::placeholder {
+.form-floating > .form-control-plaintext::placeholder,
+.form-floating > .form-control::placeholder {
   color: var(--bs-secondary-color);
   text-align: end;
 }
 
-.form-floating > .form-control-plaintext:focus::placeholder, .form-floating > .form-control:focus::placeholder {
+.form-floating > .form-control-plaintext:focus::placeholder,
+.form-floating > .form-control:focus::placeholder {
   text-align: start;
+}
+
+.invalid-feedback {
+  font-weight: 600;
+  font-size: 0.95rem;
+}
+
+.alert {
+  font-size: 1.1rem;
+  font-weight: 600;
+  border-radius: 0.35rem;
+}
+
+.is-invalid {
+  border-width: 2px;
+}
+
+.btn-close {
+  margin-top: -0.3rem;
+}
+
+.form-control:focus,
+.form-select:focus {
+  box-shadow: 0 0 8px rgba(255, 193, 7, 0.6);
+  border-color: #ffc107;
+  transition: all 0.3s ease-in-out;
+}
+
+footer {
+  font-size: 0.9rem;
+  color: #666;
 }

@@ -1,4 +1,4 @@
-using DisasterPulseApiDotnet.Src.Domain.Entities;
+using DisasterPulseApiDotnet.Src.Application.DTOs;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.AspNetCore.Mvc.RazorPages;
 using Microsoft.AspNetCore.Mvc.Rendering;
@@ -10,40 +10,89 @@ namespace DisasterPulseApiDotnet.Src.Front.Pages
         private readonly IHttpClientFactory _clientFactory;
 
         [BindProperty]
-        public Alert Alert { get; set; } = new();
+        public AlertDTO Alert { get; set; } =
+            new AlertDTO
+            {
+                Description = string.Empty,
+                Topic = string.Empty,
+                CountryId = 0,
+                Criticality = Criticality.Low,
+            };
 
         public List<SelectListItem> CountryOptions { get; set; } = new();
+
+        [TempData]
+        public string? SuccessMessage { get; set; }
 
         public CreateModel(IHttpClientFactory clientFactory)
         {
             _clientFactory = clientFactory;
         }
 
-        public void OnGet()
+        public async Task OnGetAsync()
         {
-            CountryOptions = new List<SelectListItem>
-            {
-                new SelectListItem { Value = "1", Text = "Brasil" },
-                new SelectListItem { Value = "2", Text = "Estados Unidos" },
-                new SelectListItem { Value = "3", Text = "Japão" },
-            };
+            await LoadCountryOptionsAsync();
         }
 
         public async Task<IActionResult> OnPostAsync()
         {
+            await LoadCountryOptionsAsync();
+
             if (!ModelState.IsValid)
-                return Page();
-
-            var client = _clientFactory.CreateClient("WebApi");
-            var response = await client.PostAsJsonAsync("alerts", Alert);
-
-            if (response.IsSuccessStatusCode)
             {
-                return RedirectToPage("Index");
+                return Page();
             }
 
-            ModelState.AddModelError(string.Empty, "Erro ao enviar o alerta.");
+            try
+            {
+                var client = _clientFactory.CreateClient("ApiClient");
+                var response = await client.PostAsJsonAsync("alerts", Alert);
+
+                if (response.StatusCode == System.Net.HttpStatusCode.Created)
+                {
+                    SuccessMessage = "Alerta criado com sucesso!";
+                    ModelState.Clear();
+                    Alert = new AlertDTO
+                    {
+                        Description = string.Empty,
+                        Topic = string.Empty,
+                        CountryId = 0,
+                        Criticality = Criticality.Low,
+                    };
+                }
+
+                var errorContent = await response.Content.ReadAsStringAsync();
+
+                Console.WriteLine($"Erro na API: {errorContent}");
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Erro inesperado: {ex.Message}");
+            }
+
             return Page();
+        }
+
+        private async Task LoadCountryOptionsAsync()
+        {
+            CountryOptions.Clear();
+
+            try
+            {
+                var client = _clientFactory.CreateClient("ApiClient");
+                var countries = await client.GetFromJsonAsync<List<CountryDTO>>("countries");
+
+                if (countries != null)
+                {
+                    CountryOptions = countries
+                        .Select(c => new SelectListItem { Value = c.Id.ToString(), Text = c.Name })
+                        .ToList();
+                }
+            }
+            catch (Exception ex)
+            {
+                Console.WriteLine($"Error ao carregar paises: {ex.Message}");
+            }
         }
     }
 }
