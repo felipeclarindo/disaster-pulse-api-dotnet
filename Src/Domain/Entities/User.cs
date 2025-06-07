@@ -1,5 +1,3 @@
-using System.ComponentModel.DataAnnotations.Schema;
-
 namespace DisasterPulseApiDotnet.Src.Domain.Entities
 {
     public class User

@@ -45,15 +45,6 @@ API RESTfulf developed as ASP.NET Core and OracleDB + EF Core to manage the warn
 - `PUT api/users/{id}` - Update user by Id.
 - `DELETE api/users/{id}` - Delete user by Id.
 
-(Warn)
-
-- `GET api/warns` - Get All warns.
-- `GET api/warns/{id}` - Get warn by Id.
-- `GET api/warns/countries/{sector_id}` - Get warn by Country Id.
-- `POST api/warns` - Create a New Warb.
-- `PUT api/warns/{id}` - Update warn by Id.
-- `DELETE api/warns/{id}` - Delete warn by Id.
-
 (Country)
 
 - `GET api/countries` - Get All countries.
@@ -125,15 +116,15 @@ dotnet run --project ./Src/Front
 
 - Request Examples (Swagger)
 
-``http
+```http
 GET /alerts
 POST /alerts
 {
-  "description": "Enchente no Rio de Janeiro", Brazil
+  "description": "French in Rio de Janeiro", Brazil
   "topic": "French",
   "countryId": 1
 }
-`
+```
 
 ## Contribution
 

@@ -1,35 +1,119 @@
 @page
 @model DisasterPulseApiDotnet.Src.Front.Pages.CreateModel
-
 @{
-    ViewData["Title"] = "Enviar Alerta";
+    ViewData["Title"] = "Criar Alerta";
 }
+<div class="flex-fill container py-5">
+    <h1 class="text-orange mb-4">Criar Alerta</h1>
 
-<h1>Enviar Alerta sobre Desastres Naturais</h1>
-<hr />
+    @if (!string.IsNullOrWhiteSpace(Model.SuccessMessage))
+    {
+        <div id="success-alert" class="alert alert-success alert-dismissible show" role="alert">
+            <strong>Sucesso!</strong> @Model.SuccessMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-<form method="post">
-    <div class="mb-3">
-        <label asp-for="Alert.Topic" class="form-label">Tópico</label>
-        <input asp-for="Alert.Topic" class="form-control" />
-        <span asp-validation-for="Alert.Topic" class="text-danger"></span>
-    </div>
+    @if (ViewData.ModelState.TryGetValue(string.Empty, out var generalErrors) && generalErrors.Errors.Count > 0)
+    {
+        <div id="error-alert" class="alert alert-danger alert-dismissible show" role="alert">
+            <strong>Erro!</strong> @generalErrors.Errors.First().ErrorMessage
+            <button type="button" class="btn-close" data-bs-dismiss="alert" aria-label="Close"></button>
+        </div>
+    }
 
-    <div class="mb-3">
-        <label asp-for="Alert.Description" class="form-label">Descrição</label>
-        <input asp-for="Alert.Description" class="form-control" />
-        <span asp-validation-for="Alert.Description" class="text-danger"></span>
-    </div>
+    <form method="post" class="needs-validation" novalidate>
+        <div class="mb-3">
+            <label asp-for="Alert.Topic" class="form-label"></label>
+            <input asp-for="Alert.Topic" class="form-control" required />
+            <div class="invalid-feedback">Título do alerta é obrigatório.</div>
+        </div>
 
-    <div class="mb-3">
-        <label asp-for="Alert.CountryId" class="form-label">País</label>
-        <select asp-for="Alert.CountryId" asp-items="Model.CountryOptions" class="form-select"></select>
-        <span asp-validation-for="Alert.CountryId" class="text-danger"></span>
-    </div>
+        <div class="mb-3">
+            <label asp-for="Alert.Description" class="form-label">Descrição</label>
+            <textarea asp-for="Alert.Description" class="form-control" rows="3" required></textarea>
+            <div class="invalid-feedback">Descrição é obrigatória.</div>
+        </div>
 
-    <button type="submit" class="btn btn-success">Enviar Alerta</button>
-</form>
+        <div class="mb-3">
+            <label asp-for="Alert.CountryId" class="form-label">País</label>
+            <select asp-for="Alert.CountryId" asp-items="Model.CountryOptions" class="form-select" required>
+                <option value="">Selecione um país</option>
+            </select>
+            <div class="invalid-feedback">Selecione um país.</div>
+        </div>
 
-@section Scripts {
-    <partial name="_ValidationScriptsPartial" />
-}
+        <div class="mb-3">
+            <label asp-for="Alert.Criticality" class="form-label">Criticidade</label>
+            <select asp-for="Alert.Criticality" class="form-select" required>
+                <option value="">Selecione a criticidade</option>
+                @foreach (var value in Enum.GetValues(typeof(Criticality)).Cast<Criticality>())
+                {
+                    <option value="@((int)value)">@value.ToString()</option>
+                }
+            </select>
+            <div class="invalid-feedback">Selecione o nível de criticidade.</div>
+        </div>
+
+        <button type="submit" class="btn btn-warning">Criar Alerta</button>
+        <a asp-page="/Index" class="btn btn-secondary ms-2">Cancelar</a>
+    </form>
+</div>
+
+<style>
+    .alert {
+        display: none;
+        opacity: 1;
+        transition: opacity 0.5s ease-out;
+    }
+
+    .alert.show {
+        display: block;
+    }
+
+    .alert.fade-hide {
+        opacity: 0;
+    }
+
+    .alert.fade-hidden {
+        display: none !important;
+    }
+</style>
+
+<script>
+    setTimeout(function () {
+        const successAlert = document.getElementById('success-alert');
+        const errorAlert = document.getElementById('error-alert');
+
+        if (successAlert) {
+            successAlert.classList.remove('show');
+            successAlert.classList.add('fade-hide');
+            setTimeout(function () {
+                successAlert.classList.add('fade-hidden');
+                window.location.href = '/Index';
+            }, 500);
+        }
+
+        if (errorAlert) {
+            errorAlert.classList.remove('show');
+            errorAlert.classList.add('fade-hide');
+            setTimeout(function () {
+                errorAlert.classList.add('fade-hidden');
+            }, 500);
+        }
+    }, 1500);
+
+    (function () {
+        'use strict'
+        const forms = document.querySelectorAll('.needs-validation')
+        Array.from(forms).forEach(function (form) {
+            form.addEventListener('submit', function (event) {
+                if (!form.checkValidity()) {
+                    event.preventDefault()
+                    event.stopPropagation()
+                }
+                form.classList.add('was-validated')
+            }, false)
+        })
+    })()
+</script>

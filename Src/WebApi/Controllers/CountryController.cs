@@ -1,3 +1,4 @@
+using DisasterPulseApiDotnet.Src.Application.DTOs;
 using DisasterPulseApiDotnet.Src.Infra.Database;
 using Microsoft.AspNetCore.Mvc;
 using Microsoft.EntityFrameworkCore;
@@ -30,15 +31,25 @@ namespace DisasterPulseApiDotnet.Src.Domain.Entities
         }
 
         [HttpPost]
-        public async Task<ActionResult<Country>> Create(Country country)
+        public async Task<ActionResult<Country>> Create([FromBody] CountryDTO country)
         {
-            _context.Countries.Add(country);
+            Country countryToCreate = new Country
+            {
+                Id = country.Id,
+                Name = country.Name,
+                Alerts = new List<Alert>(),
+            };
+            _context.Countries.Add(countryToCreate);
             await _context.SaveChangesAsync();
-            return CreatedAtAction(nameof(GetById), new { id = country.Id }, country);
+            return CreatedAtAction(
+                nameof(GetById),
+                new { id = countryToCreate.Id },
+                countryToCreate
+            );
         }
 
         [HttpPut("{id}")]
-        public async Task<IActionResult> Update(long id, Country country)
+        public async Task<IActionResult> Update(long id, [FromBody] Country country)
         {
             if (id != country.Id) return BadRequest();
             _context.Entry(country).State = EntityState.Modified;

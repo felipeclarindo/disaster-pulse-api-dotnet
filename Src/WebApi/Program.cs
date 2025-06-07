@@ -15,12 +15,6 @@ if (string.IsNullOrEmpty(connectionString))
 }
 
 builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseOracle(connectionString));
-builder.Services.AddHttpClient(
-    "ApiClient",
-    client =>
-    {
-        client.BaseAddress = new Uri("https://localhost:5001/api/");
-    });
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
@@ -41,6 +35,13 @@ if (app.Environment.IsDevelopment())
     app.UseSwagger();
     app.UseSwaggerUI();
     app.MapOpenApi();
+}
+
+using (var scope = app.Services.CreateScope())
+{
+    var services = scope.ServiceProvider;
+    var context = services.GetRequiredService<ApplicationDbContext>();
+    await DbSeeder.SeedCountriesAsync(context);
 }
 
 app.UseCors("AllowAllOrigins");

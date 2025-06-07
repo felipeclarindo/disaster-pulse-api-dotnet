@@ -45,15 +45,6 @@ API RESTful desenvolvida com ASP.NET Core e OracleDB + EF Core para gerenciar mo
 - `PUT api/users/{id}` - Atualizar usuario pelo Id.
 - `DELETE api/users/{id}` - Delete user by Id.
 
-(Avisos)
-
-- `GET api/warns` - Obter todas os avisos.
-- `GET api/warns/{id}` - Obter aviso por ID.
-- `GET api/warns/country/{country_id}` - Obter aviso por pais.
-- `POST api/warns` - Criar um novo aviso.
-- `PUT api/warns/{id}` - Atualizar aviso por ID.
-- `DELETE api/warns/{id}` - Deletar aviso por ID.
-
 (Paises)
 
 - `GET api/countries` - Obter todos os paises.
