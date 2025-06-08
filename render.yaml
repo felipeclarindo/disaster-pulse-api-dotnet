@@ -1,0 +1,14 @@
+services:
+  - type: web
+    name: disaster-pulse-api
+    env: dotnet
+    plan: free
+    buildCommand: dotnet build ./Src/WebApi
+    startCommand: dotnet ./Src/WebApi/bin/Debug/net8.0/WebApi.dll
+    rootDir: Src/WebApi
+    autoDeploy: true
+    envVars:
+      - key: ASPNETCORE_ENVIRONMENT
+        value: Production
+      - key: ORACLE_DB
+        sync: false
