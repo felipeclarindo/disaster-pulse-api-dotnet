@@ -20,17 +20,18 @@ namespace DisasterPulseApiDotnet.Src.WebApi.Controllers
         [HttpGet]
         public async Task<ActionResult<IEnumerable<Alert>>> GetAll()
         {
-            return Ok(await _context.Alerts.ToListAsync());
+            return Ok(await _context.Alerts.AsNoTracking().ToListAsync());
         }
 
         [HttpGet("{id}")]
+        [ProducesResponseType(typeof(Alert), 200)]
+        [ProducesResponseType(404)]
         public async Task<ActionResult<Alert>> GetById(long id)
         {
-            var moto = await _context.Alerts.FindAsync(id);
-            if (moto == null) return NotFound();
-            return Ok(moto);
+            var alert = await _context.Alerts.AsNoTracking().FirstOrDefaultAsync(a => a.Id == id);
+            if (alert == null) return NotFound();
+            return Ok(alert);
         }
-
 
         [HttpGet("criticality")]
         public ActionResult<List<AlertCriticalityCountDTO>> GetCriticalityCounts()
@@ -59,14 +60,15 @@ namespace DisasterPulseApiDotnet.Src.WebApi.Controllers
 
             var alert = new Alert
             {
-                Id = Random.Shared.NextInt64(1, long.MaxValue),
                 Description = alertDTO.Description,
                 Topic = alertDTO.Topic,
                 CountryId = alertDTO.CountryId,
                 Criticality = alertDTO.Criticality,
             };
+
             _context.Alerts.Add(alert);
             await _context.SaveChangesAsync();
+
             return CreatedAtAction(nameof(GetById), new { id = alert.Id }, alert);
         }
 
@@ -76,9 +78,14 @@ namespace DisasterPulseApiDotnet.Src.WebApi.Controllers
             var alert = await _context.Alerts.FindAsync(id);
             if (alert == null) return NotFound();
 
+            var country = await _context.Countries.FindAsync(alertDTO.CountryId);
+            if (country == null)
+                return BadRequest("Invalid country ID.");
+
             alert.Topic = alertDTO.Topic;
             alert.Description = alertDTO.Description;
             alert.CountryId = alertDTO.CountryId;
+            alert.Criticality = alertDTO.Criticality;
 
             await _context.SaveChangesAsync();
             return NoContent();
@@ -89,6 +96,7 @@ namespace DisasterPulseApiDotnet.Src.WebApi.Controllers
         {
             var alert = await _context.Alerts.FindAsync(id);
             if (alert == null) return NotFound();
+
             _context.Alerts.Remove(alert);
             await _context.SaveChangesAsync();
             return NoContent();

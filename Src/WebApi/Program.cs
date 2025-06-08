@@ -18,7 +18,8 @@ builder.Services.AddDbContext<ApplicationDbContext>(options => options.UseOracle
 builder.Services.AddCors(options =>
 {
     options.AddPolicy("AllowAllOrigins",
-        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader());
+        policy => policy.AllowAnyOrigin().AllowAnyMethod().AllowAnyHeader()
+        );
 });
 builder.Services.AddHttpClient();
 builder.Services.AddOpenApi();

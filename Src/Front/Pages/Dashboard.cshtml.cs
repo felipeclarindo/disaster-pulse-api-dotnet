@@ -25,21 +25,17 @@ namespace DisasterPulseApiDotnet.Src.Front.Pages
         {
             var client = _clientFactory.CreateClient("ApiClient");
 
-            // Buscar alertas
             var alertsResponse = await client.GetFromJsonAsync<List<Alert>>("alerts");
             Alerts = alertsResponse ?? new List<Alert>();
 
-            // Buscar países
             var countriesResponse = await client.GetFromJsonAsync<List<Country>>("countries");
             Countries = countriesResponse ?? new List<Country>();
 
-            // Agrupar alertas por país (CountryId)
             var grouped = Alerts
                 .GroupBy(a => a.CountryId)
                 .Select(g => new { CountryId = g.Key, Count = g.Count() })
                 .ToList();
 
-            // Mapear CountryId para nome
             AlertCountryNames = grouped.Select(g =>
             {
                 var country = Countries.FirstOrDefault(c => c.Id == g.CountryId);
@@ -54,7 +50,6 @@ namespace DisasterPulseApiDotnet.Src.Front.Pages
             );
             if (criticalsResponse != null)
             {
-                // Mapeia os valores numéricos para string
                 CriticalityCounts = criticalsResponse.ToDictionary(
                     c => c.Criticality switch
                     {
